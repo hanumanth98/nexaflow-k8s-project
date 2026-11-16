@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: nexaflow-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: frontend
+          image: ghcr.io/hanumanth98/nexaflow-frontend:v1
+          ports:
+            - containerPort: 8080
+          env:
+            - name: TASKS_URL
+              value: "http://tasks.nexaflow-tasks.svc.cluster.local:8081"
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: nexaflow-frontend
+spec:
+  type: NodePort
+  selector:
+    app: frontend
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30080

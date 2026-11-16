@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nexaflow-frontend
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nexaflow-tasks
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nexaflow-notifications

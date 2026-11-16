@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tasks
+  namespace: nexaflow-tasks
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tasks
+  template:
+    metadata:
+      labels:
+        app: tasks
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: tasks
+          image: ghcr.io/hanumanth98/nexaflow-tasks:v1
+          ports:
+            - containerPort: 8081
+          env:
+            - name: NOTIFICATIONS_URL
+              value: "http://notifications.nexaflow-notifications.svc.cluster.local:8082"
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tasks
+  namespace: nexaflow-tasks
+spec:
+  type: ClusterIP
+  selector:
+    app: tasks
+  ports:
+    - port: 8081
+      targetPort: 8081

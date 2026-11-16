@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notifications
+  namespace: nexaflow-notifications
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notifications
+  template:
+    metadata:
+      labels:
+        app: notifications
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: notifications
+          image: ghcr.io/hanumanth98/nexaflow-notifications:v1
+          ports:
+            - containerPort: 8082
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notifications
+  namespace: nexaflow-notifications
+spec:
+  type: ClusterIP
+  selector:
+    app: notifications
+  ports:
+    - port: 8082
+      targetPort: 8082
